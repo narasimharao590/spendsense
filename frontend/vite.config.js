@@ -1,8 +1,22 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: '/spendsense/',
-  plugins: [react()],
-})
+  base: process.env.VITE_BASE_PATH || '/spendsense/',
+  plugins: [react(), tailwindcss()],
+  server: {
+    port: Number(process.env.VITE_PORT) || 5173,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
+  },
+  preview: {
+    port: 4173,
+    strictPort: true,
+  },
+});
